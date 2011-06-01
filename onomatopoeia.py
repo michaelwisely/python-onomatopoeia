@@ -15,30 +15,50 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#probably not the best library to depend on, but it works
-from pygame import mixer
+"""
+python-onomatopoeia module
 
-#the onomatopoeia methods
-def merp(p):
-	onomatopoeia_play("merp", p)	
+Used for hilarious debugging, logging, or just for fun.
+"""
 
-#helpers
+import time
+
+try:
+	from pygame import mixer
+except:
+	print "could not load pygame mixer!"
+	raise
+
 def init():
+	"""Initializes the mixer for use. Automatically called on import."""
 	mixer.init()
+	build_list()
 
-def onomatopoeia_play(s, p):
+def play(ono_sound, ono_print=True, ono_block=True):
+	"""
+	Play an onomatopoeia 's'. If 'p' is true, also print onomatopoeia to screen.
+	Called by individual onomatopoeia methods. If 'b' is true, block until audio
+	completes playback.
+	"""
 	if p:
-		onomatopoeia_log(s)
-	onomatopoeia[s].play()
+		onomatopoeia_log(ono_sound)
+	onomatopoeia[ono_sound].play()
+	while mixer.get_busy and ono_block:
+		time.sleep(.1) #this is bad bad bad. Python needs a sched_yield() method
 
 def onomatopoeia_log(s):
+	"""Print onomatopoeia 's'. Called by onomatopoeia_play()"""
 	print(s)
 
-#dictionary of onomatopoeia methods
-onomatopoeia_methods = {
-	'merp': merp
+def build_list():
+	"""Populate the dictionary with mixer objects. Called by init()"""
+	for k in onomatopoeia.keys():
+		onomatopoeia[k] = mixer.Sound('resource/' + k + '.ogg')
+
+"""Dictionary of onomatopoeia"""
+onomatopoeia = {
+	'merp': None
 	}
 
-#add this to the end of the module
 if __name__ == "__main__":
 	init()
