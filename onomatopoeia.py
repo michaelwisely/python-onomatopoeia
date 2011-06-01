@@ -22,6 +22,8 @@ Used for hilarious debugging, logging, or just for fun.
 """
 
 import time
+import argparse
+import random as r
 
 try:
 	from pygame import mixer
@@ -40,7 +42,7 @@ def play(ono_sound, ono_print=True, ono_block=True):
 	Called by individual onomatopoeia methods. If 'b' is true, block until audio
 	completes playback.
 	"""
-	if p:
+	if ono_print:
 		onomatopoeia_log(ono_sound)
 	onomatopoeia[ono_sound].play()
 	while mixer.get_busy and ono_block:
@@ -55,6 +57,16 @@ def build_list():
 	for k in onomatopoeia.keys():
 		onomatopoeia[k] = mixer.Sound('resource/' + k + '.ogg')
 
+def list_onomatopoeia():
+	"""List all of the available onomatopoeia."""
+	for k in onomatopoeia.keys():
+		print k
+
+def random(ono_print=True, ono_block=True):
+	r.seed(None)
+	k = r.choice(onomatopoeia.keys())
+	play(k,ono_print,ono_block)
+
 """Dictionary of onomatopoeia"""
 onomatopoeia = {
 	'merp': None
@@ -62,3 +74,28 @@ onomatopoeia = {
 
 if __name__ == "__main__":
 	init()
+
+	parser = argparse.ArgumentParser(
+		description='Play and read onomatopoeia.',
+		epilog='example: ./onomatopoeia.py -o merp -p')
+		
+	parser.add_argument('-o', help='the onomatopoeia to play')
+	parser.add_argument('-p', action='store_true', help='print the onomatopoeia when playing')
+	parser.add_argument('-c', action='store_true', help='just go crazy')
+	parser.add_argument('-r', action='store_true', help='play an onomatopoeia at random')
+	parser.add_argument('-l', action='store_true', help='list the onomatopoeia')
+	args = parser.parse_args()
+
+	if args.c: #go crazy
+		while True:
+			random(args.p, True)
+	elif args.r: #random
+		random(args.p, True)
+	elif args.l: #list
+		list_onomatopoeia()
+	elif args.o != None:
+		play(args.o, args.p, True)
+	else:
+		parser.print_help()
+
+	
