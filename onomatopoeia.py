@@ -45,7 +45,7 @@ def play(ono_sound, ono_print=True, ono_block=True):
 	if ono_print:
 		onomatopoeia_log(ono_sound)
 	onomatopoeia[ono_sound].play()
-	while mixer.get_busy and ono_block:
+	while mixer.get_busy() and ono_block:
 		time.sleep(.1) #this is bad bad bad. Python needs a sched_yield() method
 
 def onomatopoeia_log(s):
@@ -69,7 +69,17 @@ def random(ono_print=True, ono_block=True):
 
 """Dictionary of onomatopoeia"""
 onomatopoeia = {
-	'merp': None
+	'merp':		None,
+	'bweep':	None,
+	'derp':		None,
+	'moop':		None,
+	'whep':		None,
+	'blagoonga':	None,
+	'bonk':		None,
+	'choo':		None,
+	'funt':		None,
+	'meep':		None,
+	'poof':		None
 	}
 
 if __name__ == "__main__":
